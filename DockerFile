@@ -1,0 +1,36 @@
+# ---- Build Stage (MUST use Maven/JDK to compile) ----
+FROM maven:3.9-eclipse-temurin-21 AS build
+
+# Set working directory inside the container
+WORKDIR /app
+
+# Step 1: Copy Maven configuration files
+# Note: Since you are running this from the root where all repos were cloned
+COPY service-repo/pom.xml ./service-repo/
+COPY E-Com-Commons/pom.xml ./E-Com-Commons/
+
+# Step 2: Copy ALL project modules into the build container
+COPY E-Com-Commons/ E-Com-Commons/
+COPY service-repo/ service-repo/
+
+# Step 3: Compile the application JAR
+# We install Commons first, then build the service
+RUN mvn -f E-Com-Commons/pom.xml clean install -DskipTests
+RUN mvn -f service-repo/pom.xml clean package -DskipTests
+
+# ---- Run Stage (JRE is fine for running the JAR) ----
+FROM eclipse-temurin:21-jre-alpine
+
+WORKDIR /app
+
+# Step 4: Copy the JAR from the 'build' stage
+# We use a wildcard to find the JAR in the service-repo's target folder
+COPY --from=build /app/service-repo/target/*.jar app.jar
+
+# Copy keystores if they exist in the resources folder
+# COPY --from=build /app/service-repo/src/main/resources/*.p12 ./
+
+# Step 5: Expose the port
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

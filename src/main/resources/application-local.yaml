@@ -1,0 +1,31 @@
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+  web:
+    resources:
+      static-locations: file:/Users/bhavukbaluja/Coding/E-Com-Website
+  datasource:
+    url: jdbc:mysql://localhost:3306/Backend?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password: rootroot
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+# To use your Mac local folder:
+storage:
+  type: local
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    hostname: localhost
+
+shared:
+  file:
+    path: /Users/bhavukbaluja/Coding/E-Com-Website/

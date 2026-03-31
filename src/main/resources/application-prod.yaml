@@ -1,0 +1,40 @@
+server:
+  port: 8085
+  ssl:
+    enabled: false
+    key-store: classpath:backend-keystore.p12
+    key-store-password: ${SSL_KEYSTORE_PASSWORD:changeit}
+    key-store-type: PKCS12
+    trust-store: classpath:backend-truststore.jks
+    trust-store-password: ${SSL_TRUSTSTORE_PASSWORD:changeit}
+    client-auth: need
+
+# To switch to Cloud (no code change required!):
+# storage:
+#   type: s3
+
+spring:
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: 5672
+    username: ${RABBITMQ_USER}
+    password: ${RABBITMQ_PASS}
+  web:
+    resources:
+      static-locations: file:/app/shared-folder/ # This is the internal container path
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${BACKEND_DB_USER}
+    password: ${BACKEND_DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:https://eureka:8761/eureka/}
+  instance:
+    prefer-ip-address: true
+
+shared:
+  file:
+    path: /app/shared-folder/ # Matches the volume mount below

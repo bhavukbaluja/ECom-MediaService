@@ -1,0 +1,104 @@
+server:
+  port: 8087
+  netty:
+    # ✅ Matches Gateway to ensure long-running video streams don't time out
+    connection-timeout: 600s
+    idle-timeout: 600s
+
+spring:
+  main:
+    web-application-type: reactive
+    allow-bean-definition-overriding: true
+    allow-circular-references: true
+
+  application:
+    name: MediaService
+
+  # ✅ WebFlux Multipart Settings (Critical for 500MB)
+  webflux:
+    multipart:
+      max-file-size: 505MB
+      max-disk-usage-per-part: 505MB
+      # 0 threshold ensures bytes stream directly to disk, avoiding RAM spikes
+      file-size-threshold: 0
+      location: /Users/bhavukbaluja/Coding/E-Com-Website/Shared/temp/
+
+  # ✅ Codec limit must be higher than the largest expected file
+  codec:
+    max-in-memory-size: 512MB
+
+  jpa:
+    hibernate:
+      ddl-auto: update # ✅ Changed from 'create' to 'update' to avoid losing data on restart
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+  # ✅ If you have standard servlet dependencies, override these too
+  servlet:
+    multipart:
+      enabled: false
+
+# ========== CUSTOM CONFIGS ==========
+app:
+  cors:
+    enabled: true
+
+gateway:
+  auth:
+    secret: "your-secure-gateway-token-12345"
+
+application:
+  company:
+    name:
+      for:
+        orderId: "posh dori"
+  global:
+    password: ADHFJSKFJNRF^&$%&&^$84744hHGHH
+  security:
+    jwt:
+      secret-key: FJDSFERJ34578237RYEFBUASDFBHDBHVDZYR436764859458237TGGH45H5HW4R7DFNET3478R7T5EER57RT7HRTFFWE
+      expiration: 24
+    refresh:
+      token:
+        expiration: 30
+        inactive: 7
+        cleanup: 1
+
+logging:
+  level:
+    org.springframework: INFO
+    # Keep Netty logs on DEBUG for now to verify the 500MB handoff
+    reactor.netty.http.server.AccessLog: DEBUG
+    com.eCom.MediaService: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+---
+spring:
+  config:
+    activate:
+      on-profile: instance1
+server:
+  port: 8086
+
+---
+spring:
+  config:
+    activate:
+      on-profile: instance2
+server:
+  port: 8087
+
+---
+spring:
+  config:
+    activate:
+      on-profile: instance3
+server:
+  port: 8089

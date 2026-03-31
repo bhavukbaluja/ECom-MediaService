@@ -1,0 +1,27 @@
+spring:
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: guest
+    password: guest
+  web:
+    resources:
+      static-locations: file:/Users/bhavukbaluja/Coding/E-Com-Website
+  datasource:
+    url: jdbc:mysql://mysql:3306/Backend?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+
+shared:
+  file:
+    path: /Users/bhavukbaluja/Coding/E-Com-Website/
